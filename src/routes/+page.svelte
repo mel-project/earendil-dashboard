@@ -1,22 +1,23 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { type Node, Network, type Data, type Edge } from 'vis-network';
-	import type { Bandwidth, Debts, RelayGraph } from './types';
+	import type { Bandwidths, Debts, RelayGraph, TimeSeries, TimeSeriesMap } from './types';
 
-	let debts: Debts = [];
-	let bandwidthStats: Bandwidth = [];
 	let neighbors: string[] = [];
+	let debts: Debts = [];
+	let bandwidthStats = {} as Bandwidths;
 	let network = null;
+	let x;
 
 	async function fetchDebts(): Promise<Debts> {
 		// const response = await fetch('/api/debts');
 		//   debts = await response.json();
 
 		const mockDebts: Debts = [
-			['node0', 100.5],
-			['node1', 200.75],
-			['node2', 150.25],
-			['node3', 300.0]
+			['alicia', 100.5],
+			['roberto', 200.75],
+			['carlos', -150.25],
+			['david', 300.0]
 		];
 
 		await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -24,21 +25,44 @@
 		return mockDebts;
 	}
 
-	async function fetchTimeseriesStats(key: string, start: number, end: number): Promise<Bandwidth> {
-		const mockStats: Bandwidth = [
-			[17, 38],
-			[1, 2],
-			[24, 96]
-		];
+	async function fetchTimeseriesStats(
+		key: string,
+		start: number,
+		end: number
+	): Promise<TimeSeries> {
+		const mockTimeSeries: TimeSeriesMap = {
+			alicia: [
+				[1621123200000, 500],
+				[1621209600000, 800],
+				[1621296000000, 700]
+			],
+			roberto: [
+				[1621123200000, 300],
+				[1621209600000, 400],
+				[1621296000000, 600]
+			],
+			carlos: [
+				[1621123200000, 500],
+				[1621209600000, 800],
+				[1621296000000, 700]
+			],
+			david: [
+				[1621123200000, 300],
+				[1621209600000, 400],
+				[1621296000000, 600]
+			]
+		};
 
-		await new Promise((resolve) => setTimeout(resolve, 1000));
-
-		return mockStats;
+		// await new Promise((resolve) => setTimeout(resolve, 1000));
+		return mockTimeSeries[key];
 	}
 
 	async function fetchNeighbors() {
-		const response = await fetch('/api/get_neighbors');
-		neighbors = await response.json();
+		const mockNeighbors = ['alicia', 'roberto', 'carlos', 'david'];
+
+		await new Promise((resolve) => setTimeout(resolve, 1000));
+
+		return mockNeighbors;
 	}
 
 	async function fetchRelayGraph(): Promise<RelayGraph> {
@@ -92,10 +116,41 @@
 		});
 	}
 
+	function calculateBandwidth(timeSeries: TimeSeries): number {
+		if (timeSeries.length < 2) {
+			return 0; // return 0 if there are fewer than 2 data points
+		}
+
+		let oldestTime = Infinity;
+		let newestTime = -Infinity;
+		let totalBytes = 0;
+
+		for (const [timestamp, bytes] of timeSeries) {
+			oldestTime = Math.min(oldestTime, timestamp);
+			newestTime = Math.max(newestTime, timestamp);
+			totalBytes += bytes;
+		}
+
+		const timeDiff = (newestTime - oldestTime) / 1000; // convert milliseconds to seconds
+		const bandwidth = totalBytes / timeDiff;
+
+		return bandwidth;
+	}
+
 	onMount(async () => {
-		network = await createNetwork();
+		neighbors = await fetchNeighbors();
 		debts = await fetchDebts();
-		// bandwidthStats = await fetchTimeseriesStats();
+		network = await createNetwork();
+
+		for (const neigh of neighbors) {
+			const start = 1;
+			const end = 2;
+			const timeSeriesUp = await fetchTimeseriesStats(neigh, start, end);
+			const timeSeriesDown = await fetchTimeseriesStats(neigh, start, end);
+			const bandwidthUp = calculateBandwidth(timeSeriesUp);
+			const bandwidthDown = calculateBandwidth(timeSeriesDown);
+			bandwidthStats[neigh] = [bandwidthUp, bandwidthDown];
+		}
 	});
 </script>
 
@@ -122,11 +177,12 @@
 	<div class="section bandwidth">
 		<h2>Bandwidth</h2>
 		<ul>
-			{#each bandwidthStats as stat}
+			{#each neighbors as neigh}
 				<li>
 					<div class="card">
-						<h3>{stat[0]}</h3>
-						<p>Bandwidth: {stat[1]}</p>
+						<h3>{neigh}</h3>
+						<p>Bandwidth up: {bandwidthStats[neigh]} bytes/second</p>
+						<p>Bandwidth down: {bandwidthStats[neigh]} bytes/second</p>
 					</div>
 				</li>
 			{/each}
@@ -148,5 +204,9 @@
 		background-color: #f0f0f0;
 		padding: 1rem;
 		margin-bottom: 1rem;
+	}
+
+	ul {
+		list-style-type: none;
 	}
 </style>
