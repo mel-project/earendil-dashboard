@@ -1,4 +1,3 @@
-// a mapping from strings to numbers with constraints to allow iteration
 export type Debts = [string, number][];
 
 export type RelayGraph = [string[], [string, string][]];

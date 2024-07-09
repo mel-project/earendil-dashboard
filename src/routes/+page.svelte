@@ -7,7 +7,6 @@
 	let debts: Debts = [];
 	let bandwidthStats = {} as Bandwidths;
 	let network = null;
-	let x;
 
 	async function fetchDebts(): Promise<Debts> {
 		// const response = await fetch('/api/debts');
@@ -181,8 +180,8 @@
 				<li>
 					<div class="card">
 						<h3>{neigh}</h3>
-						<p>Bandwidth up: {bandwidthStats[neigh]} bytes/second</p>
-						<p>Bandwidth down: {bandwidthStats[neigh]} bytes/second</p>
+						<p>Bandwidth up: {bandwidthStats[neigh]?.[0] ?? 'Loading...'} bytes/second</p>
+						<p>Bandwidth down: {bandwidthStats[neigh]?.[1] ?? 'Loading...'} bytes/second</p>
 					</div>
 				</li>
 			{/each}
