@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import { type Node, Network, type Data, type Edge } from 'vis-network';
 	import type { Bandwidths, Debts, RelayGraph, TimeSeries, TimeSeriesMap } from './types';
+	import { rpcRequest } from './utils';
 
 	let neighbors: string[] = [];
 	let debts: Debts = [];
@@ -10,7 +11,7 @@
 
 	async function fetchDebts(): Promise<Debts> {
 		// const response = await fetch('/api/debts');
-		//   debts = await response.json();
+		// debts = await response.json();
 
 		const mockDebts: Debts = [
 			['alicia', 100.5],
@@ -65,11 +66,14 @@
 	}
 
 	async function fetchRelayGraph(): Promise<RelayGraph> {
-		const relayGraph: RelayGraph = [['abc', '123'], [['abc', '123']]];
+		// const relayGraph: RelayGraph = [['abc', '123'], [['abc', '123']]];
 
-		await new Promise((resolve) => setTimeout(resolve, 1000));
+		// await new Promise((resolve) => setTimeout(resolve, 1000));
 
-		return relayGraph;
+		// return relayGraph;
+		const relay_graph: RelayGraph = await rpcRequest('relay_graph');
+
+		return relay_graph;
 	}
 
 	function toData(relayGraph: RelayGraph): Data {
