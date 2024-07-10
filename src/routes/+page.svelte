@@ -1,123 +1,20 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { type Node, Network, type Data, type Edge } from 'vis-network';
-	import type { Bandwidths, Debts, RelayGraph, TimeSeries, TimeSeriesMap } from './types';
-	import { rpcRequest } from './utils';
+	import type { BandwidthMap, Debts, TimeSeries, TimeSeriesMap } from './types';
+	import { parseGraphviz } from './utils';
+	import { fetchDebts, fetchRelayGraphviz, fetchTimeseriesStats } from './network';
+	import Graph from '$lib/Graph.svelte';
 
-	let neighbors: string[] = [];
-	let debts: Debts = [];
-	let bandwidthStats = {} as Bandwidths;
-	let network = null;
+	// height and width of relay graph
+	let height = 600;
+	let width = 1000;
 
-	async function fetchDebts(): Promise<Debts> {
-		// const response = await fetch('/api/debts');
-		// debts = await response.json();
-
-		const mockDebts: Debts = [
-			['alicia', 100.5],
-			['roberto', 200.75],
-			['carlos', -150.25],
-			['david', 300.0]
-		];
-
-		await new Promise((resolve) => setTimeout(resolve, 1000));
-
-		return mockDebts;
-	}
-
-	async function fetchTimeseriesStats(
-		key: string,
-		start: number,
-		end: number
-	): Promise<TimeSeries> {
-		const mockTimeSeries: TimeSeriesMap = {
-			alicia: [
-				[1621123200000, 500],
-				[1621209600000, 800],
-				[1621296000000, 700]
-			],
-			roberto: [
-				[1621123200000, 300],
-				[1621209600000, 400],
-				[1621296000000, 600]
-			],
-			carlos: [
-				[1621123200000, 500],
-				[1621209600000, 800],
-				[1621296000000, 700]
-			],
-			david: [
-				[1621123200000, 300],
-				[1621209600000, 400],
-				[1621296000000, 600]
-			]
-		};
-
-		// await new Promise((resolve) => setTimeout(resolve, 1000));
-		return mockTimeSeries[key];
-	}
-
-	async function fetchNeighbors() {
-		const mockNeighbors = ['alicia', 'roberto', 'carlos', 'david'];
-
-		await new Promise((resolve) => setTimeout(resolve, 1000));
-
-		return mockNeighbors;
-	}
-
-	async function fetchRelayGraph(): Promise<RelayGraph> {
-		// const relayGraph: RelayGraph = [['abc', '123'], [['abc', '123']]];
-
-		// await new Promise((resolve) => setTimeout(resolve, 1000));
-
-		// return relayGraph;
-		const relay_graph: RelayGraph = await rpcRequest('relay_graph');
-
-		return relay_graph;
-	}
-
-	function toData(relayGraph: RelayGraph): Data {
-		const [relays, adjacencies] = relayGraph;
-		const nodes: Node[] = relays.map((id) => ({ id }));
-		const edges: Edge[] = adjacencies.map(([from, to]) => ({ from, to }));
-		const data: Data = {
-			nodes,
-			edges
-		};
-
-		return data;
-	}
-
-	async function createNetwork() {
-		const container = document.getElementById('network')!;
-		let options = {
-			autoResize: true,
-			height: '100%',
-			width: '100%',
-			locale: 'en'
-			// locales: locales,
-			// clickToUse: false,
-			// configure: {...},    // defined in the configure module.
-			// edges: {...},        // defined in the edges module.
-			// nodes: {...},        // defined in the nodes module.
-			// groups: {...},       // defined in the groups module.
-			// layout: {...},       // defined in the layout module.
-			// interaction: {...},  // defined in the interaction module.
-			// manipulation: {...}, // defined in the manipulation module.
-			// physics: {...},      // defined in the physics module.
-		};
-		const relayGraph = await fetchRelayGraph();
-		let network = new Network(container, toData(relayGraph), options);
-
-		network.on('click', (params) => {
-			if (params.nodes.length === 1) {
-				const nodeId = params.nodes[0];
-				const node = neighbors.find((neighbor) => neighbor === nodeId);
-				// Display modal with node information
-				console.log('Clicked node:', node);
-			}
-		});
-	}
+	let myId = '';
+	let myNeighbors: string[] = [];
+	let myDebts: Debts = [];
+	let bandwidthStats = {} as BandwidthMap;
+	let nodes: string[] = [];
+	let edges: [string, string][] = [];
 
 	function calculateBandwidth(timeSeries: TimeSeries): number {
 		if (timeSeries.length < 2) {
@@ -141,15 +38,21 @@
 	}
 
 	onMount(async () => {
-		neighbors = await fetchNeighbors();
-		debts = await fetchDebts();
-		network = await createNetwork();
+		const relayGraph = await fetchRelayGraphviz();
+		const { longId, relays, adjacencies, neighbors } = parseGraphviz(relayGraph);
 
-		for (const neigh of neighbors) {
-			const start = 1;
-			const end = 2;
+		myId = longId;
+		nodes = relays;
+		edges = adjacencies;
+		myNeighbors = neighbors;
+		myDebts = await fetchDebts();
+
+		for (const neigh of myNeighbors) {
+			const start = Date.now();
+			const end = start - 15000; // 15-second interval
 			const timeSeriesUp = await fetchTimeseriesStats(neigh, start, end);
 			const timeSeriesDown = await fetchTimeseriesStats(neigh, start, end);
+
 			const bandwidthUp = calculateBandwidth(timeSeriesUp);
 			const bandwidthDown = calculateBandwidth(timeSeriesDown);
 			bandwidthStats[neigh] = [bandwidthUp, bandwidthDown];
@@ -158,39 +61,47 @@
 </script>
 
 <div class="container">
-	<div class="section debts">
+	<section class="section debts">
 		<h2>Debts</h2>
 		<ul>
-			{#each debts as [neighbor, amount]}
+			{#each myDebts as [neighbor, amount]}
 				<li>
-					<div class="card">
+					<article class="card">
 						<h3>{neighbor}</h3>
 						<p>{amount} micromel</p>
-					</div>
+					</article>
 				</li>
 			{/each}
 		</ul>
-	</div>
+	</section>
 
-	<div class="section relay-graph">
+	<section class="section relay-graph">
 		<h2>Relay Graph</h2>
-		<div id="network"></div>
-	</div>
+		{#if edges && edges.length > 0}
+			<Graph {nodes} {edges} {height} {width} />
+		{:else}
+			"Loading..."
+		{/if}
+	</section>
 
-	<div class="section bandwidth">
+	<section class="section bandwidth">
 		<h2>Bandwidth</h2>
 		<ul>
-			{#each neighbors as neigh}
+			{#each myNeighbors as neighbor}
 				<li>
-					<div class="card">
-						<h3>{neigh}</h3>
-						<p>Bandwidth up: {bandwidthStats[neigh]?.[0] ?? 'Loading...'} bytes/second</p>
-						<p>Bandwidth down: {bandwidthStats[neigh]?.[1] ?? 'Loading...'} bytes/second</p>
-					</div>
+					<article class="card">
+						<h3>{neighbor ?? 'Loading...'}</h3>
+						{#if !bandwidthStats[neighbor]}
+							<p>Loading...</p>
+						{:else}
+							<p>Up: {bandwidthStats[neighbor][0]} bytes/second</p>
+							<p>Down: {bandwidthStats[neighbor][1]} bytes/second</p>
+						{/if}
+					</article>
 				</li>
 			{/each}
 		</ul>
-	</div>
+	</section>
 </div>
 
 <style>
