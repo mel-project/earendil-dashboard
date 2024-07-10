@@ -66,9 +66,9 @@
 			);
 
 			let opts: Options = {
-				title: title,
-				id: 'chart1',
-				class: 'my-chart',
+				title,
+				id: neighbor + '-' + title,
+				class: 'timeseries',
 				width: size.width,
 				height: size.height,
 				padding: [0, 0, 0, Math.max((maxDigits - 4) * 8, 0)],
@@ -162,25 +162,46 @@
 </script>
 
 <div id="container" style="height: {height}" class:loading={$isLoading} bind:this={container}>
+	<h4>{neighbor}</h4>
 	{#if $isLoading}
-		<p>Loading...</p>
+		<p class="message">Loading...</p>
 	{:else if $error}
-		<p>{$error}</p>
+		<p class="message">{$error}</p>
 	{/if}
 </div>
 
 <style>
+	#container {
+		border: 1px solid #ccc;
+		padding: 10px;
+		border-radius: 5px;
+	}
+
+	h4 {
+		border-bottom: 2px solid #333;
+		padding-bottom: 5px;
+	}
+
+	.message {
+		padding: 5px;
+		margin-top: 10px;
+	}
+
 	.loading {
 		opacity: 0.4;
 	}
 
 	:global(.uplot) {
 		position: relative;
+		border: 1px solid #eee;
 	}
 
 	:global(.u-legend) {
 		position: absolute !important;
 		top: 10px !important;
 		left: 15%;
+		border: 1px solid #ddd;
+		padding: 5px;
+		background-color: rgba(255, 255, 255, 0.8);
 	}
 </style>

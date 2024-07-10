@@ -56,8 +56,20 @@
 		<ul>
 			{#each myNeighbors as neighbor}
 				<li>
-					<TimeSeries {neighbor} direction={Direction.Down} />
-					<TimeSeries {neighbor} direction={Direction.Up} />
+					<TimeSeries
+						{neighbor}
+						direction={Direction.Down}
+						title="Timeseries down"
+						unit="bytes/second"
+					/>
+				</li>
+				<li>
+					<TimeSeries
+						{neighbor}
+						direction={Direction.Up}
+						title="Timeseries up"
+						unit="bytes/second"
+					/>
 				</li>
 			{/each}
 		</ul>
