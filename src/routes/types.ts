@@ -1,29 +1,18 @@
 export type Debts = [string, number][];
 
-export type TimeSeries = [number, number][];
-
-export type TimeSeriesMap = { [key: string]: TimeSeries };
-
-export type BandwidthMap = { [key: string]: [number, number] };
-
-type JrpcId = number | string;
-
-interface JrpcRequest {
-	jsonrpc: string;
-	method: string;
-	params: any[];
-	id: JrpcId;
+export interface TimeSeriesPoint {
+	date: Date;
+	value: number;
 }
 
-interface JrpcResponse {
-	jsonrpc: string;
-	result?: any;
-	error?: JrpcError;
-	id: JrpcId;
+export enum Direction {
+	Up,
+	Down
 }
 
-interface JrpcError {
-	code: number;
-	message: string;
-	data?: any;
+export interface TimeSeries {
+	series: TimeSeriesPoint[];
+	direction: Direction;
 }
+
+export type ErrorState = string | null;

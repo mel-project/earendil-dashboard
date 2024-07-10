@@ -1,42 +1,19 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import type { BandwidthMap, Debts, TimeSeries, TimeSeriesMap } from './types';
+	import { Direction, type Debts } from './types';
 	import { parseGraphviz } from './utils';
 	import { fetchDebts, fetchRelayGraphviz, fetchTimeseriesStats } from './network';
-	import D3Graph from '$lib/D3Graph.svelte';
 	import VisGraph from '$lib/VisGraph.svelte';
+	import TimeSeries from '$lib/TimeSeries.svelte';
 
-	// height and width of relay graph
-	let height = 600;
-	let width = 1000;
+	let graphHeight = 600;
+	let graphWidth = 1000;
 
 	let myId = '';
 	let myNeighbors: string[] = [];
 	let myDebts: Debts = [];
-	let bandwidthStats = {} as BandwidthMap;
 	let nodes: string[] = [];
 	let edges: [string, string][] = [];
-
-	function calculateBandwidth(timeSeries: TimeSeries): number {
-		if (timeSeries.length < 2) {
-			return 0; // return 0 if there are fewer than 2 data points
-		}
-
-		let oldestTime = Infinity;
-		let newestTime = -Infinity;
-		let totalBytes = 0;
-
-		for (const [timestamp, bytes] of timeSeries) {
-			oldestTime = Math.min(oldestTime, timestamp);
-			newestTime = Math.max(newestTime, timestamp);
-			totalBytes += bytes;
-		}
-
-		const timeDiff = (newestTime - oldestTime) / 1000; // convert milliseconds to seconds
-		const bandwidth = totalBytes / timeDiff;
-
-		return bandwidth;
-	}
 
 	onMount(async () => {
 		const relayGraph = await fetchRelayGraphviz();
@@ -47,17 +24,6 @@
 		edges = adjacencies;
 		myNeighbors = neighbors;
 		myDebts = await fetchDebts();
-
-		for (const neigh of myNeighbors) {
-			const start = Date.now();
-			const end = start - 15000; // 15-second interval
-			const timeSeriesUp = await fetchTimeseriesStats(neigh, start, end);
-			const timeSeriesDown = await fetchTimeseriesStats(neigh, start, end);
-
-			const bandwidthUp = calculateBandwidth(timeSeriesUp);
-			const bandwidthDown = calculateBandwidth(timeSeriesDown);
-			bandwidthStats[neigh] = [bandwidthUp, bandwidthDown];
-		}
 	});
 </script>
 
@@ -79,8 +45,7 @@
 	<section class="section relay-graph">
 		<h2>Relay Graph</h2>
 		{#if edges && edges.length > 0}
-			<D3Graph {nodes} {edges} {height} {width} />
-			<VisGraph {nodes} {edges} {height} {width} />
+			<VisGraph {nodes} {edges} height={graphHeight} width={graphWidth} />
 		{:else}
 			"Loading..."
 		{/if}
@@ -91,15 +56,8 @@
 		<ul>
 			{#each myNeighbors as neighbor}
 				<li>
-					<article class="card">
-						<h3>{neighbor ?? 'Loading...'}</h3>
-						{#if !bandwidthStats[neighbor]}
-							<p>Loading...</p>
-						{:else}
-							<p>Up: {bandwidthStats[neighbor][0]} bytes/second</p>
-							<p>Down: {bandwidthStats[neighbor][1]} bytes/second</p>
-						{/if}
-					</article>
+					<TimeSeries {neighbor} direction={Direction.Down} />
+					<TimeSeries {neighbor} direction={Direction.Up} />
 				</li>
 			{/each}
 		</ul>
