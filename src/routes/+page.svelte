@@ -3,7 +3,8 @@
 	import type { BandwidthMap, Debts, TimeSeries, TimeSeriesMap } from './types';
 	import { parseGraphviz } from './utils';
 	import { fetchDebts, fetchRelayGraphviz, fetchTimeseriesStats } from './network';
-	import Graph from '$lib/Graph.svelte';
+	import D3Graph from '$lib/D3Graph.svelte';
+	import VisGraph from '$lib/VisGraph.svelte';
 
 	// height and width of relay graph
 	let height = 600;
@@ -78,7 +79,8 @@
 	<section class="section relay-graph">
 		<h2>Relay Graph</h2>
 		{#if edges && edges.length > 0}
-			<Graph {nodes} {edges} {height} {width} />
+			<D3Graph {nodes} {edges} {height} {width} />
+			<VisGraph {nodes} {edges} {height} {width} />
 		{:else}
 			"Loading..."
 		{/if}
