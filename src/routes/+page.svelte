@@ -55,12 +55,37 @@
 
 		<section class="col-md-4">
 			<h2>Bandwidth</h2>
+			<div class="mb-3">
+				<div class="card">
+					<div class="card-body">
+						<TimeSeries
+							node={myId}
+							direction={Direction.Down}
+							title="Bandwith Down"
+							unit="bytes/second"
+						/>
+					</div>
+				</div>
+			</div>
+			<div class="mb-3">
+				<div class="card">
+					<div class="card-body">
+						<TimeSeries
+							node={myId}
+							direction={Direction.Up}
+							title="Bandwidth Up"
+							unit="bytes/second"
+						/>
+					</div>
+				</div>
+			</div>
+
 			{#each myNeighbors as neighbor}
 				<div class="mb-3">
 					<div class="card">
 						<div class="card-body">
 							<TimeSeries
-								{neighbor}
+								node={neighbor}
 								direction={Direction.Down}
 								title="Bandwith Down"
 								unit="bytes/second"
@@ -72,7 +97,7 @@
 					<div class="card">
 						<div class="card-body">
 							<TimeSeries
-								{neighbor}
+								node={neighbor}
 								direction={Direction.Up}
 								title="Bandwidth Up"
 								unit="bytes/second"

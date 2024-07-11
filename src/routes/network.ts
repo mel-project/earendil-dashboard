@@ -1,5 +1,5 @@
 import { Direction } from '../routes/types';
-import { arrayToHexString } from './utils';
+import { arrayToHex } from './utils';
 
 const EARENDIL_CONTROL = 'http://dashboard.earendil.network/rpc-testing';
 
@@ -44,11 +44,6 @@ export async function fetchTimeseriesStats(
 	end: number,
 	direction: Direction
 ): Promise<TimeSeries> {
-	// neighbor = '14154070117b3c1a71fa2fc6bc7d20e5afc93fbe98a13b86b013d0a91215f74f';
-	// start = 0;
-	// end = 2820637023988;
-	// direction = Direction.Down;
-
 	const key = direction === Direction.Down ? neighbor + '|down' : neighbor + '|up';
 	const stats = await rpcRequest('timeseries_stats', [key, start, end]);
 	const series: TimeSeriesPoint[] = stats.map(([timestamp, value]) => ({
@@ -64,10 +59,10 @@ export async function fetchTimeseriesStats(
 
 export async function fetchRelayGraphInfo(): GraphInfo {
 	const info = await rpcRequest('relay_graph_info');
-	const myFingerprint = arrayToHexString(info.my_fingerprint);
-	const relays = info.relays.map(arrayToHexString);
-	const adjacencies = info.adjacencies.map((pair) => pair.map(arrayToHexString));
-	const neighbors = info.neighbors.map(arrayToHexString);
+	const myFingerprint = arrayToHex(info.my_fingerprint);
+	const relays = info.relays.map(arrayToHex);
+	const adjacencies = info.adjacencies.map((pair) => pair.map(arrayToHex));
+	const neighbors = info.neighbors.map(arrayToHex);
 
 	return {
 		myFingerprint,

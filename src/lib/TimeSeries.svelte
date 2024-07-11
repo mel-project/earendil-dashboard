@@ -10,7 +10,7 @@
 	} from '../routes/types';
 	import { fetchTimeseriesStats } from '../routes/network';
 
-	export let neighbor: string = '';
+	export let node: string = '';
 	export let direction: Direction;
 	export let title = '';
 	export let unit = '';
@@ -44,9 +44,9 @@
 			isLoading.set(true);
 			error.set(null);
 
-			const start = Date.now();
-			const end = start - 3_600_000; // 1-hour interval
-			const timeSeries = await fetchTimeseriesStats(neighbor, start, end, direction);
+			const start = 0;
+			const end = Date.now();
+			const timeSeries = await fetchTimeseriesStats(node, start, end, direction);
 
 			if (timeSeries.series.length < 2) {
 				throw new Error('Insufficient data points');
@@ -65,7 +65,7 @@
 
 			let opts: Options = {
 				title,
-				id: neighbor + '-' + title,
+				id: node + '-' + title,
 				class: 'timeseries',
 				width: size.width,
 				height: size.height,
@@ -127,7 +127,7 @@
 							try {
 								console.log(u.select);
 								console.log('Fetching data for range...', { min, max });
-								const timeSeries = await fetchTimeseriesStats(neighbor, start, end, direction);
+								const timeSeries = await fetchTimeseriesStats(node, start, end, direction);
 								u.setData(formatData(timeSeries), true);
 							} finally {
 								isLoading.set(false);
@@ -158,7 +158,7 @@
 </script>
 
 <div id="container" style="minHeight: 20rem" class:loading={$isLoading} bind:this={container}>
-	<h4>{neighbor}</h4>
+	<h4>{node}</h4>
 	{#if $isLoading}
 		<p class="message">Loading...</p>
 	{:else if $error}
