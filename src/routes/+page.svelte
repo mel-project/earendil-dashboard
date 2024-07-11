@@ -29,7 +29,7 @@
 
 <div class="container-fluid">
 	<div class="row">
-		<div class="col-md-3">
+		<!-- <div class="col-md-3">
 			<section class="mt-4">
 				<h2>Debts</h2>
 				<ul class="list-unstyled">
@@ -60,9 +60,9 @@
 					</div>
 				</div>
 			</section>
-		</div>
+		</div> -->
 
-		<div class="col-md-3">
+		<div class="col">
 			<section class="mt-4">
 				<h2>Bandwidth</h2>
 				{#each myNeighbors as neighbor}

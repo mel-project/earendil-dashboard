@@ -56,6 +56,7 @@
 			let data: AlignedData = formatData(timeSeries);
 			console.log('Formatted data:', data);
 			let size = getSize();
+			console.log('*** SIZE ***', size, container);
 
 			let maxDigits = Math.ceil(
 				Math.log10(
@@ -162,12 +163,12 @@
 </script>
 
 <div id="container" style="height: {height}" class:loading={$isLoading} bind:this={container}>
-	<h4>{neighbor}</h4>
+	<!-- <h4>{neighbor}</h4>
 	{#if $isLoading}
 		<p class="message">Loading...</p>
 	{:else if $error}
 		<p class="message">{$error}</p>
-	{/if}
+	{/if} -->
 </div>
 
 <style>
