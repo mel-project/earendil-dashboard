@@ -27,53 +27,73 @@
 	});
 </script>
 
-<div class="container">
-	<section class="section debts">
-		<h2>Debts</h2>
-		<ul>
-			{#each myDebts as [neighbor, amount]}
-				<li>
-					<article class="card">
-						<h3>{neighbor}</h3>
-						<p>{amount} micromel</p>
-					</article>
-				</li>
-			{/each}
-		</ul>
-	</section>
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-md-3">
+			<section class="mt-4">
+				<h2>Debts</h2>
+				<ul class="list-unstyled">
+					{#each myDebts as [neighbor, amount]}
+						<li class="mb-3">
+							<div class="card">
+								<div class="card-body">
+									<h5 class="card-title">{neighbor}</h5>
+									<p class="card-text">{amount} micromel</p>
+								</div>
+							</div>
+						</li>
+					{/each}
+				</ul>
+			</section>
+		</div>
 
-	<section class="section relay-graph">
-		<h2>Relay Graph</h2>
-		{#if edges && edges.length > 0}
-			<VisGraph {nodes} {edges} height={graphHeight} width={graphWidth} />
-		{:else}
-			"Loading..."
-		{/if}
-	</section>
+		<div class="col-md-6">
+			<section class="mt-4">
+				<h2>Relay Graph</h2>
+				<div class="card">
+					<div class="card-body">
+						{#if edges && edges.length > 0}
+							<VisGraph {nodes} {edges} height={graphHeight} width={graphWidth} />
+						{:else}
+							<p class="text-center">Loading...</p>
+						{/if}
+					</div>
+				</div>
+			</section>
+		</div>
 
-	<section class="section bandwidth">
-		<h2>Bandwidth</h2>
-		<ul>
-			{#each myNeighbors as neighbor}
-				<li>
-					<TimeSeries
-						{neighbor}
-						direction={Direction.Down}
-						title="Timeseries down"
-						unit="bytes/second"
-					/>
-				</li>
-				<li>
-					<TimeSeries
-						{neighbor}
-						direction={Direction.Up}
-						title="Timeseries up"
-						unit="bytes/second"
-					/>
-				</li>
-			{/each}
-		</ul>
-	</section>
+		<div class="col-md-3">
+			<section class="mt-4">
+				<h2>Bandwidth</h2>
+				{#each myNeighbors as neighbor}
+					<div class="mb-3">
+						<div class="card">
+							<div class="card-body">
+								<TimeSeries
+									{neighbor}
+									direction={Direction.Down}
+									title="Timeseries down"
+									unit="bytes/second"
+								/>
+							</div>
+						</div>
+					</div>
+					<div class="mb-3">
+						<div class="card">
+							<div class="card-body">
+								<TimeSeries
+									{neighbor}
+									direction={Direction.Up}
+									title="Timeseries up"
+									unit="bytes/second"
+								/>
+							</div>
+						</div>
+					</div>
+				{/each}
+			</section>
+		</div>
+	</div>
 </div>
 
 <style>
