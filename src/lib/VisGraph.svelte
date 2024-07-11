@@ -5,8 +5,6 @@
 
 	export let nodes: string[] = [];
 	export let edges: [string, string][] = [];
-	export let height: number = 600;
-	export let width: number = 1000;
 
 	let container: HTMLElement;
 
@@ -44,10 +42,18 @@
 	});
 </script>
 
-<div bind:this={container} style="width: {width}px; height: {height}px;"></div>
+<div bind:this={container} style="width: 100%; height: 75rem;"></div>
 
 <style>
+	:global(body, html) {
+		margin: 0;
+		padding: 0;
+		height: 100%;
+		overflow: hidden;
+	}
+
 	div {
 		border: 1px solid #ccc;
+		box-sizing: border-box;
 	}
 </style>

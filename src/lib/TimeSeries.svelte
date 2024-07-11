@@ -15,7 +15,6 @@
 	export let title = '';
 	export let unit = '';
 	export let label = 'Value';
-	export let height = '20rem';
 	export let stroke = 'black';
 	export let fill = 'rgba(0, 0, 0, 0.1)';
 	export let stepped = false;
@@ -54,9 +53,7 @@
 			}
 
 			let data: AlignedData = formatData(timeSeries);
-			console.log('Formatted data:', data);
 			let size = getSize();
-			console.log('*** SIZE ***', size, container);
 
 			let maxDigits = Math.ceil(
 				Math.log10(
@@ -129,11 +126,9 @@
 							isLoading.set(true);
 							try {
 								console.log(u.select);
-
 								console.log('Fetching data for range...', { min, max });
 								const timeSeries = await fetchTimeseriesStats(neighbor, start, end, direction);
 								u.setData(formatData(timeSeries), true);
-								console.log('Fetched');
 							} finally {
 								isLoading.set(false);
 								u.setSelect({ width: 0, height: 0 }, false);
@@ -162,30 +157,19 @@
 	});
 </script>
 
-<div id="container" style="height: {height}" class:loading={$isLoading} bind:this={container}>
-	<!-- <h4>{neighbor}</h4>
+<div id="container" style="minHeight: 20rem" class:loading={$isLoading} bind:this={container}>
+	<h4>{neighbor}</h4>
 	{#if $isLoading}
 		<p class="message">Loading...</p>
 	{:else if $error}
 		<p class="message">{$error}</p>
-	{/if} -->
+	{/if}
 </div>
 
 <style>
 	#container {
 		border: 1px solid #ccc;
-		padding: 10px;
 		border-radius: 5px;
-	}
-
-	h4 {
-		border-bottom: 2px solid #333;
-		padding-bottom: 5px;
-	}
-
-	.message {
-		padding: 5px;
-		margin-top: 10px;
 	}
 
 	.loading {
@@ -199,8 +183,8 @@
 
 	:global(.u-legend) {
 		position: absolute !important;
-		top: 10px !important;
-		left: 15%;
+		top: 1px !important;
+		right: 2px;
 		border: 1px solid #ddd;
 		padding: 5px;
 		background-color: rgba(255, 255, 255, 0.8);

@@ -1,4 +1,11 @@
-export type Debts = [string, number][];
+export type GraphInfo = {
+	myFingerprint: string;
+	relays: string[];
+	adjacencies: [string, string][];
+	neighbors: string[];
+};
+
+export type Debts = { [key: string]: number };
 
 export interface TimeSeriesPoint {
 	date: Date;
