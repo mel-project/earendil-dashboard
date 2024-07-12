@@ -4,7 +4,7 @@
 	import { fetchDebts, fetchRelayGraphInfo } from '../lib/network';
 	import VisGraph from '$lib/VisGraph.svelte';
 	import TimeSeries from '$lib/TimeSeries.svelte';
-	import { shortId } from '$lib/utils';
+	import Debt from '$lib/Debts.svelte';
 
 	let myId = '';
 	let myNeighbors: string[] = [];
@@ -42,12 +42,7 @@
 					<ul class="list-unstyled">
 						{#each Object.entries(myDebts) as [neighbor, amount]}
 							<li class="mb-3">
-								<div class="card">
-									<div class="card-body">
-										<h5 class="card-title">{shortId(neighbor)}</h5>
-										<p class="card-text">{amount} micromel</p>
-									</div>
-								</div>
+								<Debt debts={myDebts} />
 							</li>
 						{/each}
 					</ul>
