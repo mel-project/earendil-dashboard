@@ -1,4 +1,4 @@
-import { Direction } from '../routes/types';
+import { Direction } from './types';
 import { arrayToHex } from './utils';
 
 const EARENDIL_CONTROL = 'http://dashboard.earendil.network/rpc-testing';

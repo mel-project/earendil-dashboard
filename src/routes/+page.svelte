@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { Direction, type Debts } from './types';
-	import { fetchDebts, fetchRelayGraphInfo } from './network';
+	import { Direction, type Debts } from '../lib/types';
+	import { fetchDebts, fetchRelayGraphInfo } from '../lib/network';
 	import VisGraph from '$lib/VisGraph.svelte';
 	import TimeSeries from '$lib/TimeSeries.svelte';
 

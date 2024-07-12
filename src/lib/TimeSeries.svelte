@@ -2,13 +2,8 @@
 	import { onMount } from 'svelte';
 	import { writable, type Writable } from 'svelte/store';
 	import uPlot, { type Options, type AlignedData } from 'uplot';
-	import {
-		Direction,
-		type ErrorState,
-		type TimeSeries,
-		type TimeSeriesPoint
-	} from '../routes/types';
-	import { fetchTimeseriesStats } from '../routes/network';
+	import { Direction, type ErrorState, type TimeSeries, type TimeSeriesPoint } from '$lib/types';
+	import { fetchTimeseriesStats } from '$lib/network';
 
 	export let node: string = '';
 	export let direction: Direction;
