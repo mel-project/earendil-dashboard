@@ -3,7 +3,7 @@
 	import { Direction, type Debts } from '../lib/types';
 	import { fetchDebts, fetchRelayGraphInfo } from '../lib/network';
 	import VisGraph from '$lib/VisGraph.svelte';
-	import TimeSeries from '$lib/TimeSeries.svelte';
+	import Bandwidth from '$lib/Bandwidth.svelte';
 	import Debt from '$lib/Debts.svelte';
 
 	let myId = '';
@@ -57,56 +57,34 @@
 			{#if myId}
 				<section class="col-md-4">
 					<h2>Bandwidth</h2>
-					<div class="mb-3">
-						<div class="card">
-							<div class="card-body">
-								<TimeSeries
-									node={myId}
-									direction={Direction.Down}
-									title="Bandwidth Down"
-									unit="bytes/second"
-								/>
-							</div>
-						</div>
-					</div>
-					<div class="mb-3">
-						<div class="card">
-							<div class="card-body">
-								<TimeSeries
-									node={myId}
-									direction={Direction.Up}
-									title="Bandwidth Up"
-									unit="bytes/second"
-								/>
-							</div>
-						</div>
-					</div>
+
+					<Bandwidth
+						node={myId}
+						direction={Direction.Down}
+						title="Bandwidth Down"
+						unit="bytes/second"
+					/>
+
+					<Bandwidth
+						node={myId}
+						direction={Direction.Up}
+						title="Bandwidth Up"
+						unit="bytes/second"
+					/>
 
 					{#each myNeighbors as neighbor}
-						<div class="mb-3">
-							<div class="card">
-								<div class="card-body">
-									<TimeSeries
-										node={neighbor}
-										direction={Direction.Down}
-										title="Bandwidth Down"
-										unit="bytes/second"
-									/>
-								</div>
-							</div>
-						</div>
-						<div class="mb-3">
-							<div class="card">
-								<div class="card-body">
-									<TimeSeries
-										node={neighbor}
-										direction={Direction.Up}
-										title="Bandwidth Up"
-										unit="bytes/second"
-									/>
-								</div>
-							</div>
-						</div>
+						<Bandwidth
+							node={neighbor}
+							direction={Direction.Down}
+							title="Bandwidth Down"
+							unit="bytes/second"
+						/>
+						<Bandwidth
+							node={neighbor}
+							direction={Direction.Up}
+							title="Bandwidth Up"
+							unit="bytes/second"
+						/>
 					{/each}
 				</section>
 			{/if}

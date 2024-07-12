@@ -15,9 +15,9 @@
 	export let fill = 'rgba(0, 0, 0, 0.1)';
 	export let stepped = false;
 
-	// Create the stores with proper typing
 	let isLoading: Writable<boolean> = writable(true);
 	let error: Writable<ErrorState> = writable(null);
+	let chart: uPlot | null = null;
 	let container: HTMLElement;
 
 	const formatData = (timeSeries: TimeSeries): AlignedData => {
@@ -153,17 +153,18 @@
 	});
 </script>
 
-<div id="container" style="minHeight: 20rem" class:loading={$isLoading} bind:this={container}>
-	<h4>{shortId(node)}</h4>
-	{#if $isLoading}
-		<p class="message">Loading...</p>
-	{:else if $error}
-		<p class="message">{$error}</p>
-	{/if}
-</div>
+{#if !$error}
+	<div id="container" style="minHeight: 20rem" class:loading={$isLoading} bind:this={container}>
+		<h4>{shortId(node)}</h4>
+		{#if $isLoading}
+			<p class="message">Loading...</p>
+		{/if}
+	</div>
+{/if}
 
 <style>
 	#container {
+		margin: 1rem;
 		border: 1px solid #ccc;
 		border-radius: 5px;
 	}
@@ -179,7 +180,7 @@
 
 	:global(.u-legend) {
 		position: absolute !important;
-		top: 1px !important;
+		top: -40px !important;
 		right: 2px;
 		border: 1px solid #ddd;
 		padding: 5px;
