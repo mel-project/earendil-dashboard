@@ -4,6 +4,7 @@
 	import { fetchDebts, fetchRelayGraphInfo } from '../lib/network';
 	import VisGraph from '$lib/VisGraph.svelte';
 	import TimeSeries from '$lib/TimeSeries.svelte';
+	import { shortId } from '$lib/utils';
 
 	let myId = '';
 	let myNeighbors: string[] = [];
@@ -34,6 +35,7 @@
 {:else}
 	<div class="container-fluid">
 		<div class="row">
+			<!-- Debts -->
 			{#if Object.keys(myDebts).length > 0}
 				<section class="col-md-2">
 					<h2>Debts</h2>
@@ -42,7 +44,7 @@
 							<li class="mb-3">
 								<div class="card">
 									<div class="card-body">
-										<h5 class="card-title">{neighbor}</h5>
+										<h5 class="card-title">{shortId(neighbor)}</h5>
 										<p class="card-text">{amount} micromel</p>
 									</div>
 								</div>
@@ -52,17 +54,19 @@
 				</section>
 			{/if}
 
+			<!-- Relay Graph -->
 			{#if edges.length > 0 && nodes.length > 0}
 				<section class="col-md-6">
 					<h2>Relay Graph</h2>
 					<div class="card">
 						<div class="card-body">
-							<VisGraph {nodes} {edges} />
+							<VisGraph mainNode={myId} {nodes} {edges} />
 						</div>
 					</div>
 				</section>
 			{/if}
 
+			<!-- Bandwidth -->
 			{#if myId}
 				<section class="col-md-4">
 					<h2>Bandwidth</h2>

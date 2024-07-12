@@ -2,7 +2,9 @@
 	import { onMount } from 'svelte';
 	import { Network } from 'vis-network';
 	import 'vis-network/styles/vis-network.css';
+	import { shortId } from './utils';
 
+	export let mainNode: string = '';
 	export let nodes: string[] = [];
 	export let edges: [string, string][] = [];
 
@@ -11,7 +13,18 @@
 	onMount(() => {
 		const visNodes = nodes.map((node, index) => ({
 			id: index,
-			label: node
+			label: shortId(node),
+			color:
+				node === mainNode
+					? {
+							background: '#ff9900',
+							border: '#ff8800',
+							highlight: {
+								background: '#ffc266',
+								border: '#ffb84d'
+							}
+						}
+					: '#97c2fc'
 		}));
 
 		const visEdges = edges.map(([from, to]) => ({
@@ -26,11 +39,16 @@
 
 		const options = {
 			nodes: {
-				shape: 'dot',
+				shape: 'circle',
 				size: 30
 			},
 			edges: {
-				length: 200
+				length: 200,
+				color: {
+					color: '#848484',
+					highlight: '#848484',
+					hover: '#848484'
+				}
 			},
 			physics: {
 				enabled: true,

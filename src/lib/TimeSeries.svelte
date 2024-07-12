@@ -4,6 +4,7 @@
 	import uPlot, { type Options, type AlignedData } from 'uplot';
 	import { Direction, type ErrorState, type TimeSeries, type TimeSeriesPoint } from '$lib/types';
 	import { fetchTimeseriesStats } from '$lib/network';
+	import { shortId } from './utils';
 
 	export let node: string = '';
 	export let direction: Direction;
@@ -60,7 +61,7 @@
 
 			let opts: Options = {
 				title,
-				id: node + '-' + title,
+				id: `${node}-${title}`,
 				class: 'timeseries',
 				width: size.width,
 				height: size.height,
@@ -78,7 +79,7 @@
 						value: (self, rawValue, seriesIdx, idx) => {
 							console.log(`Raw value:`, rawValue, `Series:`, seriesIdx, `Index:`, idx);
 							if (rawValue === null || rawValue === undefined || idx === null) {
-								return 'N/A' + (unit ? ' ' + unit : '');
+								return 'N/A ' + (unit ? unit : '');
 							}
 							return rawValue.toFixed(4) + (unit ? ' ' + unit : '');
 						},
@@ -153,7 +154,7 @@
 </script>
 
 <div id="container" style="minHeight: 20rem" class:loading={$isLoading} bind:this={container}>
-	<h4>{node}</h4>
+	<h4>{shortId(node)}</h4>
 	{#if $isLoading}
 		<p class="message">Loading...</p>
 	{:else if $error}
