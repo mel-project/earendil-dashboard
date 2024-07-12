@@ -18,7 +18,7 @@
 				node === mainNode
 					? {
 							background: '#ff9900',
-							border: '#ff8800',
+							border: '#ff7700',
 							highlight: {
 								background: '#ffc266',
 								border: '#ffb84d'

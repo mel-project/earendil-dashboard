@@ -36,18 +36,10 @@
 	<div class="container-fluid">
 		<div class="row">
 			<!-- Debts -->
-			{#if Object.keys(myDebts).length > 0}
-				<section class="col-md-2">
-					<h2>Debts</h2>
-					<ul class="list-unstyled">
-						{#each Object.entries(myDebts) as [neighbor, amount]}
-							<li class="mb-3">
-								<Debt debts={myDebts} />
-							</li>
-						{/each}
-					</ul>
-				</section>
-			{/if}
+			<section class="col-md-2">
+				<h2>Debts</h2>
+				<Debt debts={myDebts} />
+			</section>
 
 			<!-- Relay Graph -->
 			{#if edges.length > 0 && nodes.length > 0}
@@ -127,9 +119,5 @@
 		background-color: #f0f0f0;
 		padding: 1rem;
 		margin-bottom: 1rem;
-	}
-
-	ul {
-		list-style-type: none;
 	}
 </style>
