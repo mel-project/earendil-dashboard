@@ -33,7 +33,7 @@
 {#if isLoading}
 	<p>Loading...</p>
 {:else}
-	<div class="container-fluid">
+	<div class="container-fluid toplevel">
 		<div class="row">
 			<!-- Debts -->
 			<section class="col-md-2">
@@ -93,9 +93,18 @@
 {/if}
 
 <style>
+	.toplevel {
+		margin-top: 2rem;
+	}
+
 	.card {
 		background-color: #f0f0f0;
 		padding: 1rem;
 		margin-bottom: 1rem;
+	}
+
+	h2 {
+		font-size: 1.2rem;
+		font-weight: bold;
 	}
 </style>

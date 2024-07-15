@@ -39,7 +39,7 @@
 
 		const options = {
 			nodes: {
-				shape: 'circle',
+				shape: 'box',
 				size: 30
 			},
 			edges: {
@@ -53,6 +53,13 @@
 			physics: {
 				enabled: true,
 				solver: 'forceAtlas2Based'
+				// forceAtlas2Based: {
+				// 	springLength: 100,
+				// 	damping: 0.8
+				// }
+			},
+			layout: {
+				improvedLayout: false
 			}
 		};
 

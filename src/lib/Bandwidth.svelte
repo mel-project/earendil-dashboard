@@ -165,8 +165,10 @@
 <style>
 	#container {
 		margin: 1rem;
-		border: 1px solid #ccc;
-		border-radius: 5px;
+		/* border: 1px solid #ccc; */
+		/* border-radius: 5px; */
+		height: 20rem;
+		margin-bottom: 10rem;
 	}
 
 	.loading {

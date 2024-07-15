@@ -1,5 +1,5 @@
 import { Direction } from './types';
-import { arrayToHex } from './utils';
+import { rawToId } from './utils';
 
 const EARENDIL_CONTROL = 'http://dashboard.earendil.network/rpc-testing';
 
@@ -59,10 +59,11 @@ export async function fetchTimeseriesStats(
 
 export async function fetchRelayGraphInfo(): GraphInfo {
 	const info = await rpcRequest('relay_graph_info');
-	const myFingerprint = arrayToHex(info.my_fingerprint);
-	const relays = info.relays.map(arrayToHex);
-	const adjacencies = info.adjacencies.map((pair) => pair.map(arrayToHex));
-	const neighbors = info.neighbors.map(arrayToHex);
+	const myFingerprint = rawToId(info.my_fingerprint);
+	console.log('info gotten', info);
+	const relays = info.relays.map(rawToId);
+	const adjacencies = info.adjacencies.map((pair) => pair.map(rawToId));
+	const neighbors = info.neighbors.map(rawToId);
 
 	return {
 		myFingerprint,
